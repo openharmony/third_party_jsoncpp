@@ -17,6 +17,8 @@
         <filefilterlist>
             <filefilter name="defaultPolicyFilter" desc="Filters for license header policies">
                 <filteritem type="filepath" name="devtools/licenseupdater.py" desc="Not license statement text"/>
+                <filteritem type="filepath" name="doc/doxyfile.in" desc="jsoncpp 参考手册生成配置脚本"/>
+                <filteritem type="filepath" name="doc/web_doxyfile.in" desc="jsoncpp 参考手册生成配置脚本"/>
             </filefilter>
         </filefilterlist>
     </oatconfig>
