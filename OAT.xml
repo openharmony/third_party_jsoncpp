@@ -16,7 +16,7 @@
     <oatconfig>
         <policylist>
             <policy name="jsoncpp" desc="">
-                <policyitem type="compatibility" name="MIT" path=",*" desc="MIT license is compatible with Aapache 2.0.">
+                <policyitem type="compatibility" name="MIT" path=",*" desc="MIT license is compatible with Aapache 2.0."/>
             </policy>
         </policylist>
         <filefilterlist>
