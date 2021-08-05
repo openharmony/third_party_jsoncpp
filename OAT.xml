@@ -14,11 +14,17 @@
 -->
 <configuration>
     <oatconfig>
+        <policylist>
+            <policy name="jsoncpp" desc="">
+                <policyitem type="compatibility" name="MIT" path=",*" desc="MIT license is compatible with Aapache 2.0.">
+            </policy>
+        </policylist>
         <filefilterlist>
             <filefilter name="defaultPolicyFilter" desc="Filters for license header policies">
                 <filteritem type="filepath" name="devtools/licenseupdater.py" desc="Not license statement text"/>
                 <filteritem type="filepath" name="doc/doxyfile.in" desc="jsoncpp 参考手册生成配置脚本"/>
                 <filteritem type="filepath" name="doc/web_doxyfile.in" desc="jsoncpp 参考手册生成配置脚本"/>
+                <filteritem type="filepath" name="LICENSE" desc="MIT license is compatible with Aapache 2.0."/>
             </filefilter>
         </filefilterlist>
     </oatconfig>
