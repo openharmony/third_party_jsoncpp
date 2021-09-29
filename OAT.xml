@@ -20,6 +20,9 @@
             </policy>
         </policylist>
         <filefilterlist>
+            <filefilter name="binaryFileTypePolicyFilter" desc="Filters for binary file policies">
+                <filteritem type="filepath" name=".*" desc="For license see the license of this project."/>
+            </filefilter>
             <filefilter name="defaultPolicyFilter" desc="Filters for license header policies">
                 <filteritem type="filepath" name="devtools/licenseupdater.py" desc="Not license statement text"/>
                 <filteritem type="filepath" name="doc/doxyfile.in" desc="jsoncpp 参考手册生成配置脚本"/>
