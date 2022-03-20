@@ -1666,6 +1666,12 @@ bool OurReader::decodeDouble(Token& token, Value& decoded) {
   const String buffer(token.start_, token.end_);
   IStringStream is(buffer);
   if (!(is >> value)) {
+    // the value could be lower than numeric_limits<double>::min(), in this situtation we should return the value with the gurantee
+    // of conversion which has been performed and no occurances of range error.
+    if ((value > 0 && value < std::numeric_limits<double>::min()) || (value < 0 && value > -std::numeric_limits<double>::min())) {
+      decoded = value;
+      return true;
+    }
     return addError(
         "'" + String(token.start_, token.end_) + "' is not a number.", token);
   }
