@@ -39,5 +39,6 @@ ohos_shared_library("jsoncpp") {
     "//third_party/jsoncpp/include/",
   ]
   public_configs = [ ":jsoncpp_public_config" ]
-  subsystem_name = "distributeddatamgr"
+  part_name = "jsoncpp"
+  subsystem_name = "thirdparty"
 }
