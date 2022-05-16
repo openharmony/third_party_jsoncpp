@@ -13,12 +13,26 @@
 
 import("//build/ohos.gni")
 
+config("config_static") {
+  cflags = [
+    "-std=c++17",
+    "-Wno-error=implicit-fallthrough",
+    "-Wno-deprecated-declarations",
+  ]
+  visibility = [ ":*" ]
+  include_dirs = [ "//third_party/jsoncpp/include" ]
+}
+
 config("jsoncpp_config") {
   cflags = [
     "-std=c++17",
     "-Wno-error=implicit-fallthrough",
     "-Wno-deprecated-declarations",
   ]
+}
+
+config("flag_config") {
+  cflags_cc = [ "-fexceptions" ]
 }
 
 config("jsoncpp_public_config") {
@@ -39,6 +53,31 @@ ohos_shared_library("jsoncpp") {
     "//third_party/jsoncpp/include/",
   ]
   public_configs = [ ":jsoncpp_public_config" ]
+  part_name = "jsoncpp"
+  subsystem_name = "thirdparty"
+}
+
+ohos_static_library("jsoncpp_static") {
+  sources = [
+    "//third_party/jsoncpp/src/lib_json/json_reader.cpp",
+    "//third_party/jsoncpp/src/lib_json/json_value.cpp",
+    "//third_party/jsoncpp/src/lib_json/json_writer.cpp",
+  ]
+  use_exceptions = true
+  configs = [ ":config_static" ]
+  public_configs = [ ":jsoncpp_public_config" ]
+  public_configs += [ ":jsoncpp_config" ]
+  public_configs += [ ":flag_config" ]
+  include_dirs = [
+    "//third_party/jsoncpp/include/json/",
+    "//third_party/jsoncpp/include/",
+  ]
+  cflags_cc = [
+    "-DJSON_USE_EXCEPTION=0",
+    "-Wall",
+    "-Werror",
+    "-Wno-implicit-fallthrough",
+  ]
   part_name = "jsoncpp"
   subsystem_name = "thirdparty"
 }
