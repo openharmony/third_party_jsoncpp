@@ -65,9 +65,8 @@ ohos_static_library("jsoncpp_static") {
   ]
   use_exceptions = true
   configs = [ ":config_static" ]
+  configs += [ ":flag_config" ]
   public_configs = [ ":jsoncpp_public_config" ]
-  public_configs += [ ":jsoncpp_config" ]
-  public_configs += [ ":flag_config" ]
   include_dirs = [
     "//third_party/jsoncpp/include/json/",
     "//third_party/jsoncpp/include/",
