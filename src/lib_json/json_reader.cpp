@@ -772,6 +772,10 @@ void Reader::getLocationLineAndColumn(Location location, int& line,
   while (current < location && current != end_) {
     Char c = *current++;
     if (c == '\r') {
+      // Add boundary check to avoid cross the border
+      if (current == end_) {
+        break;
+      }
       if (*current == '\n')
         ++current;
       lastLineStart = current;
@@ -1838,6 +1842,10 @@ void OurReader::getLocationLineAndColumn(Location location, int& line,
   while (current < location && current != end_) {
     Char c = *current++;
     if (c == '\r') {
+      // Add boundary check to avoid cross the border
+      if (current == end_) {
+        break;
+      }
       if (*current == '\n')
         ++current;
       lastLineStart = current;
