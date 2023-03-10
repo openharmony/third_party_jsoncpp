@@ -33,11 +33,10 @@ namespace Json {
  * \deprecated Use CharReader and CharReaderBuilder.
  */
 
-class JSONCPP_DEPRECATED(
-    "Use CharReader and CharReaderBuilder instead.") JSON_API Reader {
+class JSON_API Reader {
 public:
-  typedef char Char;
-  typedef const Char* Location;
+  using Char = char;
+  using Location = const Char*;
 
   /** \brief An error tagged with where in the JSON text it was encountered.
    *
@@ -51,13 +50,13 @@ public:
   };
 
   /** \brief Constructs a Reader allowing all features for parsing.
+    * \deprecated Use CharReader and CharReaderBuilder.
    */
-  JSONCPP_DEPRECATED("Use CharReader and CharReaderBuilder instead")
   Reader();
 
   /** \brief Constructs a Reader allowing the specified feature set for parsing.
+    * \deprecated Use CharReader and CharReaderBuilder.
    */
-  JSONCPP_DEPRECATED("Use CharReader and CharReaderBuilder instead")
   Reader(const Features& features);
 
   /** \brief Read a Value from a <a HREF="http://www.json.org">JSON</a>
@@ -187,7 +186,7 @@ private:
     Location extra_;
   };
 
-  typedef std::deque<ErrorInfo> Errors;
+  using Errors = std::deque<ErrorInfo>;
 
   bool readToken(Token& token);
   void skipSpaces();
@@ -210,8 +209,7 @@ private:
                               unsigned int& unicode);
   bool decodeUnicodeEscapeSequence(Token& token, Location& current,
                                    Location end, unsigned int& unicode);
-  bool addError(const String& message, Token& token,
-                Location extra = JSONCPP_NULL);
+  bool addError(const String& message, Token& token, Location extra = nullptr);
   bool recoverFromError(TokenType skipUntilToken);
   bool addErrorAndRecover(const String& message, Token& token,
                           TokenType skipUntilToken);
@@ -227,25 +225,25 @@ private:
   static bool containsNewLine(Location begin, Location end);
   static String normalizeEOL(Location begin, Location end);
 
-  typedef std::stack<Value*> Nodes;
+  using Nodes = std::stack<Value*>;
   Nodes nodes_;
   Errors errors_;
   String document_;
-  Location begin_;
-  Location end_;
-  Location current_;
-  Location lastValueEnd_;
-  Value* lastValue_;
+  Location begin_{};
+  Location end_{};
+  Location current_{};
+  Location lastValueEnd_{};
+  Value* lastValue_{};
   String commentsBefore_;
   Features features_;
-  bool collectComments_;
+  bool collectComments_{};
 }; // Reader
 
 /** Interface for reading JSON from a char array.
  */
 class JSON_API CharReader {
 public:
-  virtual ~CharReader() {}
+  virtual ~CharReader() = default;
   /** \brief Read a Value from a <a HREF="http://www.json.org">JSON</a>
    * document. The document must be a UTF-8 encoded string containing the
    * document to read.
@@ -267,7 +265,7 @@ public:
 
   class JSON_API Factory {
   public:
-    virtual ~Factory() {}
+    virtual ~Factory() = default;
     /** \brief Allocate a CharReader via operator new().
      * \throw std::exception if something goes wrong (e.g. invalid settings)
      */
@@ -325,6 +323,9 @@ public:
    * - `"allowSpecialFloats": false or true`
    *   - If true, special float values (NaNs and infinities) are allowed and
    *     their values are lossfree restorable.
+   * - `"skipBom": false or true`
+   *   - If true, if the input starts with the Unicode byte order mark (BOM),
+   *     it is skipped.
    *
    * You can examine 'settings_` yourself to see the defaults. You can also
    * write and read them just like any JSON Value.
@@ -333,9 +334,9 @@ public:
   Json::Value settings_;
 
   CharReaderBuilder();
-  ~CharReaderBuilder() JSONCPP_OVERRIDE;
+  ~CharReaderBuilder() override;
 
-  CharReader* newCharReader() const JSONCPP_OVERRIDE;
+  CharReader* newCharReader() const override;
 
   /** \return true if 'settings' are legal and consistent;
    *   otherwise, indicate bad settings via 'invalid'.

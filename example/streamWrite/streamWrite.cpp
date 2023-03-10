@@ -1,5 +1,6 @@
 #include "json/json.h"
 #include <iostream>
+#include <memory>
 /** \brief Write the Value object to a stream.
  * Example Usage:
  * $g++ streamWrite.cpp -ljsoncpp -std=c++11 -o streamWrite
@@ -12,11 +13,11 @@
 int main() {
   Json::Value root;
   Json::StreamWriterBuilder builder;
-  Json::StreamWriter* writer(builder.newStreamWriter());
+  const std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
 
   root["Name"] = "robin";
   root["Age"] = 20;
   writer->write(root, &std::cout);
-  delete writer;
+
   return EXIT_SUCCESS;
 }
