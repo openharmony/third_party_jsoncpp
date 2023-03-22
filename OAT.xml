@@ -30,5 +30,10 @@
                 <filteritem type="filepath" name="LICENSE" desc="MIT license is compatible with Aapache 2.0."/>
             </filefilter>
         </filefilterlist>
+        <licensematcherlist>
+            <licensematcher name="MIT" desc="">
+                <licensetext name="# Public Domain or MIT" desc=""/>
+            </licensematcher>
+        </licensematcherlist>
     </oatconfig>
 </configuration>

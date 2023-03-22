@@ -24,9 +24,7 @@ struct Options {
   Json::String path;
   Json::Features features;
   bool parseOnly;
-
-  typedef Json::String (*writeFuncType)(Json::Value const&);
-
+  using writeFuncType = Json::String (*)(Json::Value const&);
   writeFuncType write;
 };
 
@@ -59,11 +57,11 @@ static Json::String readInputTestFile(const char* path) {
   if (!file)
     return "";
   fseek(file, 0, SEEK_END);
-  long const size = ftell(file);
-  size_t const usize = static_cast<size_t>(size);
+  auto const size = ftell(file);
+  auto const usize = static_cast<size_t>(size);
   fseek(file, 0, SEEK_SET);
-  char* buffer = new char[usize + 1];
-  buffer[usize] = 0;
+  auto buffer = new char[size + 1];
+  buffer[size] = 0;
   Json::String text;
   if (fread(buffer, 1, usize, file) == usize)
     text = buffer;
@@ -113,9 +111,7 @@ static void printValueTree(FILE* fout, Json::Value& value,
     Json::Value::Members members(value.getMemberNames());
     std::sort(members.begin(), members.end());
     Json::String suffix = *(path.end() - 1) == '.' ? "" : ".";
-    for (Json::Value::Members::const_iterator it = members.begin();
-         it != members.end(); it++) {
-      const Json::String& name = *it;
+    for (const auto& name : members) {
       printValueTree(fout, value[name], path + suffix + name);
     }
   } break;
@@ -142,7 +138,7 @@ static int parseAndSaveValueTree(const Json::String& input,
         features.allowDroppedNullPlaceholders_;
     builder.settings_["allowNumericKeys"] = features.allowNumericKeys_;
 
-    Json::CharReader* reader(builder.newCharReader());
+    std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
     Json::String errors;
     const bool parsingSuccessful =
         reader->parse(input.data(), input.data() + input.size(), root, &errors);
@@ -152,7 +148,7 @@ static int parseAndSaveValueTree(const Json::String& input,
                 << errors << std::endl;
       return 1;
     }
-    delete reader;
+
     // We may instead check the legacy implementation (to ensure it doesn't
     // randomly get broken).
   } else {
@@ -339,6 +335,7 @@ int main(int argc, const char* argv[]) {
     std::cerr << "Unhandled exception:" << std::endl << e.what() << std::endl;
     return 1;
   }
+  return 0;
 }
 
 #if defined(__GNUC__)

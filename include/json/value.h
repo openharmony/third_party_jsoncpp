@@ -13,16 +13,13 @@
 // Conditional NORETURN attribute on the throw functions would:
 // a) suppress false positives from static code analysis
 // b) possibly improve optimization opportunities.
-// For compatibility, [[noreturn]] is not used
 #if !defined(JSONCPP_NORETURN)
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && _MSC_VER == 1800
 #define JSONCPP_NORETURN __declspec(noreturn)
-#elif defined(__GNUC__) || defined(__clang__)
-#define JSONCPP_NORETURN __attribute__((noreturn))
 #else
-#define JSONCPP_NORETURN
+#define JSONCPP_NORETURN [[noreturn]]
 #endif
-#endif // if !defined(JSONCPP_NORETURN)
+#endif
 
 // Support for '= delete' with template declarations was a late addition
 // to the c++11 standard and is rejected by clang 3.8 and Apple clang 8.2
@@ -42,15 +39,10 @@
 #endif
 #endif
 
-#if JSONCPP_CXX_STD_11
-#else
-#undef JSONCPP_TEMPLATE_DELETE
-#define JSONCPP_TEMPLATE_DELETE
-#include <string.h>
-#endif
-
+#include <array>
 #include <exception>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -58,7 +50,7 @@
 // be used by...
 #if defined(JSONCPP_DISABLE_DLL_INTERFACE_WARNING)
 #pragma warning(push)
-#pragma warning(disable : 4251)
+#pragma warning(disable : 4251 4275)
 #endif // if defined(JSONCPP_DISABLE_DLL_INTERFACE_WARNING)
 
 #pragma pack(push, 8)
@@ -75,8 +67,8 @@ namespace Json {
 class JSON_API Exception : public std::exception {
 public:
   Exception(String msg);
-  ~Exception() JSONCPP_NOEXCEPT JSONCPP_OVERRIDE;
-  char const* what() const JSONCPP_NOEXCEPT JSONCPP_OVERRIDE;
+  ~Exception() noexcept override;
+  char const* what() const noexcept override;
 
 protected:
   String msg_;
@@ -154,7 +146,7 @@ enum PrecisionType {
  */
 class JSON_API StaticString {
 public:
-  JSONCPP_OP_EXPLICIT StaticString(const char* czstring) : c_str_(czstring) {}
+  explicit StaticString(const char* czstring) : c_str_(czstring) {}
 
   operator const char*() const { return c_str_; }
 
@@ -202,21 +194,21 @@ class JSON_API Value {
   friend class ValueIteratorBase;
 
 public:
-  typedef std::vector<String> Members;
-  typedef ValueIterator iterator;
-  typedef ValueConstIterator const_iterator;
-  typedef Json::UInt UInt;
-  typedef Json::Int Int;
+  using Members = std::vector<String>;
+  using iterator = ValueIterator;
+  using const_iterator = ValueConstIterator;
+  using UInt = Json::UInt;
+  using Int = Json::Int;
 #if defined(JSON_HAS_INT64)
-  typedef Json::UInt64 UInt64;
-  typedef Json::Int64 Int64;
+  using UInt64 = Json::UInt64;
+  using Int64 = Json::Int64;
 #endif // defined(JSON_HAS_INT64)
-  typedef Json::LargestInt LargestInt;
-  typedef Json::LargestUInt LargestUInt;
-  typedef Json::ArrayIndex ArrayIndex;
+  using LargestInt = Json::LargestInt;
+  using LargestUInt = Json::LargestUInt;
+  using ArrayIndex = Json::ArrayIndex;
 
   // Required for boost integration, e. g. BOOST_TEST
-  typedef std::string value_type;
+  using value_type = std::string;
 
 #if JSON_USE_NULLREF
   // Binary compatibility kludges, do not use.
@@ -228,35 +220,34 @@ public:
   static Value const& nullSingleton();
 
   /// Minimum signed integer value that can be stored in a Json::Value.
-  static JSONCPP_CONST LargestInt minLargestInt =
+  static constexpr LargestInt minLargestInt =
       LargestInt(~(LargestUInt(-1) / 2));
   /// Maximum signed integer value that can be stored in a Json::Value.
-  static JSONCPP_CONST LargestInt maxLargestInt =
-      LargestInt(LargestUInt(-1) / 2);
+  static constexpr LargestInt maxLargestInt = LargestInt(LargestUInt(-1) / 2);
   /// Maximum unsigned integer value that can be stored in a Json::Value.
-  static JSONCPP_CONST LargestUInt maxLargestUInt = LargestUInt(-1);
+  static constexpr LargestUInt maxLargestUInt = LargestUInt(-1);
 
   /// Minimum signed int value that can be stored in a Json::Value.
-  static JSONCPP_CONST Int minInt = Int(~(UInt(-1) / 2));
+  static constexpr Int minInt = Int(~(UInt(-1) / 2));
   /// Maximum signed int value that can be stored in a Json::Value.
-  static JSONCPP_CONST Int maxInt = Int(UInt(-1) / 2);
+  static constexpr Int maxInt = Int(UInt(-1) / 2);
   /// Maximum unsigned int value that can be stored in a Json::Value.
-  static JSONCPP_CONST UInt maxUInt = UInt(-1);
+  static constexpr UInt maxUInt = UInt(-1);
 
 #if defined(JSON_HAS_INT64)
   /// Minimum signed 64 bits int value that can be stored in a Json::Value.
-  static JSONCPP_CONST Int64 minInt64 = Int64(~(UInt64(-1) / 2));
+  static constexpr Int64 minInt64 = Int64(~(UInt64(-1) / 2));
   /// Maximum signed 64 bits int value that can be stored in a Json::Value.
-  static JSONCPP_CONST Int64 maxInt64 = Int64(UInt64(-1) / 2);
+  static constexpr Int64 maxInt64 = Int64(UInt64(-1) / 2);
   /// Maximum unsigned 64 bits int value that can be stored in a Json::Value.
-  static JSONCPP_CONST UInt64 maxUInt64 = UInt64(-1);
+  static constexpr UInt64 maxUInt64 = UInt64(-1);
 #endif // defined(JSON_HAS_INT64)
   /// Default precision for real value for string representation.
-  static JSONCPP_CONST UInt defaultRealPrecision = 17;
+  static constexpr UInt defaultRealPrecision = 17;
   // The constant is hard-coded because some compiler have trouble
   // converting Value::maxUInt64 to a double correctly (AIX/xlC).
   // Assumes that UInt64 is a 64 bits integer.
-  static JSONCPP_CONST double maxUInt64AsDouble = 18446744073709551615.0;
+  static constexpr double maxUInt64AsDouble = 18446744073709551615.0;
 // Workaround for bug in the NVIDIAs CUDA 9.1 nvcc compiler
 // when using gcc and clang backend compilers.  CZString
 // cannot be defined as private.  See issue #486
@@ -272,14 +263,11 @@ private:
     CZString(ArrayIndex index);
     CZString(char const* str, unsigned length, DuplicationPolicy allocate);
     CZString(CZString const& other);
-#if JSONCPP_CXX_STD_11
-    CZString(CZString&& other);
-#endif
+    CZString(CZString&& other) noexcept;
     ~CZString();
     CZString& operator=(const CZString& other);
-#if JSONCPP_CXX_STD_11
-    CZString& operator=(CZString&& other);
-#endif
+    CZString& operator=(CZString&& other) noexcept;
+
     bool operator<(CZString const& other) const;
     bool operator==(CZString const& other) const;
     ArrayIndex index() const;
@@ -354,18 +342,15 @@ public:
   Value(const StaticString& value);
   Value(const String& value);
   Value(bool value);
+  Value(std::nullptr_t ptr) = delete;
   Value(const Value& other);
-#if JSONCPP_CXX_STD_11
-  Value(Value&& other);
-#endif
+  Value(Value&& other) noexcept;
   ~Value();
 
   /// \note Overwrite existing comments. To preserve comments, use
   /// #swapPayload().
   Value& operator=(const Value& other);
-#if JSONCPP_CXX_STD_11
-  Value& operator=(Value&& other);
-#endif
+  Value& operator=(Value&& other) noexcept;
 
   /// Swap everything.
   void swap(Value& other);
@@ -437,7 +422,7 @@ public:
   bool empty() const;
 
   /// Return !isNull()
-  JSONCPP_OP_EXPLICIT operator bool() const;
+  explicit operator bool() const;
 
   /// Remove all object members and array elements.
   /// \pre type() is arrayValue, objectValue, or nullValue
@@ -478,15 +463,11 @@ public:
   ///
   /// Equivalent to jsonvalue[jsonvalue.size()] = value;
   Value& append(const Value& value);
-#if JSONCPP_CXX_STD_11
   Value& append(Value&& value);
-#endif
 
   /// \brief Insert value in array at specific index
   bool insert(ArrayIndex index, const Value& newValue);
-#if JSONCPP_CXX_STD_11
   bool insert(ArrayIndex index, Value&& newValue);
-#endif
 
   /// Access an object value by name, create a null member if it does not exist.
   /// \note Because of our implementation, keys are limited to 2^30 -1 chars.
@@ -582,11 +563,15 @@ public:
 
   /// \deprecated Always pass len.
   JSONCPP_DEPRECATED("Use setComment(String const&) instead.")
-  void setComment(const char* comment, CommentPlacement placement);
+  void setComment(const char* comment, CommentPlacement placement) {
+    setComment(String(comment, strlen(comment)), placement);
+  }
   /// Comments must be //... or /* ... */
-  void setComment(const char* comment, size_t len, CommentPlacement placement);
+  void setComment(const char* comment, size_t len, CommentPlacement placement) {
+    setComment(String(comment, len), placement);
+  }
   /// Comments must be //... or /* ... */
-  void setComment(const String& comment, CommentPlacement placement);
+  void setComment(String comment, CommentPlacement placement);
   bool hasComment(CommentPlacement placement) const;
   /// Include delimiters and embedded newlines.
   String getComment(CommentPlacement placement) const;
@@ -648,15 +633,18 @@ private:
 
   class Comments {
   public:
-    Comments() {}
+    Comments() = default;
     Comments(const Comments& that);
+    Comments(Comments&& that) noexcept;
     Comments& operator=(const Comments& that);
+    Comments& operator=(Comments&& that) noexcept;
     bool has(CommentPlacement slot) const;
     String get(CommentPlacement slot) const;
-    void set(CommentPlacement slot, String s);
+    void set(CommentPlacement slot, String comment);
 
   private:
-    String ptr_[numberOfCommentPlacement];
+    using Array = std::array<String, numberOfCommentPlacement>;
+    std::unique_ptr<Array> ptr_;
   };
   Comments comments_;
 
@@ -711,8 +699,8 @@ public:
 private:
   enum Kind { kindNone = 0, kindIndex, kindKey };
   String key_;
-  ArrayIndex index_;
-  Kind kind_;
+  ArrayIndex index_{};
+  Kind kind_{kindNone};
 };
 
 /** \brief Experimental and untested: represents a "path" to access a node.
@@ -741,8 +729,8 @@ public:
   Value& make(Value& root) const;
 
 private:
-  typedef std::vector<const PathArgument*> InArgs;
-  typedef std::vector<PathArgument> Args;
+  using InArgs = std::vector<const PathArgument*>;
+  using Args = std::vector<PathArgument>;
 
   void makePath(const String& path, const InArgs& in);
   void addPathInArg(const String& path, const InArgs& in,
@@ -757,10 +745,10 @@ private:
  */
 class JSON_API ValueIteratorBase {
 public:
-  typedef std::bidirectional_iterator_tag iterator_category;
-  typedef unsigned int size_t;
-  typedef int difference_type;
-  typedef ValueIteratorBase SelfType;
+  using iterator_category = std::bidirectional_iterator_tag;
+  using size_t = unsigned int;
+  using difference_type = int;
+  using SelfType = ValueIteratorBase;
 
   bool operator==(const SelfType& other) const { return isEqual(other); }
 
@@ -817,14 +805,13 @@ protected:
 private:
   Value::ObjectValues::iterator current_;
   // Indicates that iterator is for a null value.
-  bool isNull_;
+  bool isNull_{true};
 
 public:
   // For some reason, BORLAND needs these at the end, rather
   // than earlier. No idea why.
   ValueIteratorBase();
-  JSONCPP_OP_EXPLICIT
-  ValueIteratorBase(const Value::ObjectValues::iterator& current);
+  explicit ValueIteratorBase(const Value::ObjectValues::iterator& current);
 };
 
 /** \brief const iterator for object and array value.
@@ -834,12 +821,12 @@ class JSON_API ValueConstIterator : public ValueIteratorBase {
   friend class Value;
 
 public:
-  typedef const Value value_type;
+  using value_type = const Value;
   // typedef unsigned int size_t;
   // typedef int difference_type;
-  typedef const Value& reference;
-  typedef const Value* pointer;
-  typedef ValueConstIterator SelfType;
+  using reference = const Value&;
+  using pointer = const Value*;
+  using SelfType = ValueConstIterator;
 
   ValueConstIterator();
   ValueConstIterator(ValueIterator const& other);
@@ -847,8 +834,7 @@ public:
 private:
   /*! \internal Use by Value to create an iterator.
    */
-  JSONCPP_OP_EXPLICIT
-  ValueConstIterator(const Value::ObjectValues::iterator& current);
+  explicit ValueConstIterator(const Value::ObjectValues::iterator& current);
 
 public:
   SelfType& operator=(const ValueIteratorBase& other);
@@ -886,22 +872,21 @@ class JSON_API ValueIterator : public ValueIteratorBase {
   friend class Value;
 
 public:
-  typedef Value value_type;
-  typedef unsigned int size_t;
-  typedef int difference_type;
-  typedef Value& reference;
-  typedef Value* pointer;
-  typedef ValueIterator SelfType;
+  using value_type = Value;
+  using size_t = unsigned int;
+  using difference_type = int;
+  using reference = Value&;
+  using pointer = Value*;
+  using SelfType = ValueIterator;
 
   ValueIterator();
-  JSONCPP_OP_EXPLICIT ValueIterator(const ValueConstIterator& other);
+  explicit ValueIterator(const ValueConstIterator& other);
   ValueIterator(const ValueIterator& other);
 
 private:
   /*! \internal Use by Value to create an iterator.
    */
-  JSONCPP_OP_EXPLICIT
-  ValueIterator(const Value::ObjectValues::iterator& current);
+  explicit ValueIterator(const Value::ObjectValues::iterator& current);
 
 public:
   SelfType& operator=(const SelfType& other);
@@ -933,8 +918,8 @@ public:
    *  because the returned references/pointers can be used
    *  to change state of the base class.
    */
-  reference operator*() { return deref(); }
-  pointer operator->() { return &deref(); }
+  reference operator*() const { return const_cast<reference>(deref()); }
+  pointer operator->() const { return const_cast<pointer>(&deref()); }
 };
 
 inline void swap(Value& a, Value& b) { a.swap(b); }

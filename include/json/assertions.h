@@ -58,10 +58,4 @@
     }                                                                          \
   } while (0)
 
-#if JSONCPP_CXX_STD_11
-#define JSONCPP_STATIC_ASSERT static_assert
-#else
-#define JSONCPP_STATIC_ASSERT JSON_ASSERT_MESSAGE
-#endif
-
 #endif // JSON_ASSERTIONS_H_INCLUDED

@@ -9,7 +9,7 @@ project(
   # 2. /include/json/version.h
   # 3. /CMakeLists.txt
   # IMPORTANT: also update the SOVERSION!!
-  version : '00.11.0',
+  version : '1.9.4',
   default_options : [
     'buildtype=release',
     'cpp_std=c++11',
@@ -50,7 +50,7 @@ jsoncpp_lib = library(
     'src/lib_json/json_value.cpp',
     'src/lib_json/json_writer.cpp',
   ]),
-  soversion : 23,
+  soversion : 25,
   install : true,
   include_directories : jsoncpp_include_directories,
   cpp_args: dll_export_flag)
@@ -73,7 +73,7 @@ if meson.is_subproject() or not get_option('tests')
   subdir_done()
 endif
 
-python = import('python').find_installation('python3')
+python = import('python').find_installation()
 
 jsoncpp_test = executable(
   'jsoncpp_test', files([
