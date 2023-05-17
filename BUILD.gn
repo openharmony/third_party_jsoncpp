@@ -53,6 +53,10 @@ ohos_shared_library("jsoncpp") {
     "//third_party/jsoncpp/include/",
   ]
   public_configs = [ ":jsoncpp_public_config" ]
+  innerapi_tags = [
+    "chipsetsdk",
+    "platformsdk",
+  ]
   part_name = "jsoncpp"
   subsystem_name = "thirdparty"
   install_images = [
