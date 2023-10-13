@@ -13,6 +13,25 @@
 
 import("//build/ohos.gni")
 
+# Execute the script and extract jsoncpp
+action("jsoncpp_install_action") {
+  script = "//third_party/jsoncpp/install.py"
+  outputs = [
+    "${target_gen_dir}/jsoncpp-1.9.5/src/lib_json/json_reader.cpp",
+    "${target_gen_dir}/jsoncpp-1.9.5/src/lib_json/json_value.cpp",
+    "${target_gen_dir}/jsoncpp-1.9.5/src/lib_json/json_writer.cpp",
+  ]
+
+  inputs = [ "//third_party/jsoncpp/jsoncpp-1.9.5.tar.gz" ]
+
+  args = [
+    "--gen-dir",
+    rebase_path("${target_gen_dir}", root_build_dir),
+    "--source-file",
+    rebase_path("//third_party/jsoncpp"),
+  ]
+}
+
 config("config_static") {
   cflags = [
     "-std=c++17",
@@ -20,7 +39,6 @@ config("config_static") {
     "-Wno-deprecated-declarations",
   ]
   visibility = [ ":*" ]
-  include_dirs = [ "//third_party/jsoncpp/include" ]
 }
 
 config("jsoncpp_config") {
@@ -36,55 +54,44 @@ config("flag_config") {
 }
 
 config("jsoncpp_public_config") {
-  include_dirs = [ "//third_party/jsoncpp/include/" ]
+  include_dirs = [ get_label_info(":jsoncpp_install_action", "target_gen_dir") +
+                   "/jsoncpp-1.9.5/include" ]
 }
 
 ohos_shared_library("jsoncpp") {
   visibility = [ "*" ]
-  sources = [
-    "//third_party/jsoncpp/src/lib_json/json_reader.cpp",
-    "//third_party/jsoncpp/src/lib_json/json_value.cpp",
-    "//third_party/jsoncpp/src/lib_json/json_writer.cpp",
-  ]
+  sources = get_target_outputs(":jsoncpp_install_action")
   use_exceptions = true
   configs = [ ":jsoncpp_config" ]
-  include_dirs = [
-    "//third_party/jsoncpp/include/json/",
-    "//third_party/jsoncpp/include/",
-  ]
   public_configs = [ ":jsoncpp_public_config" ]
   innerapi_tags = [
     "chipsetsdk",
     "platformsdk",
   ]
-  part_name = "jsoncpp"
-  subsystem_name = "thirdparty"
   install_images = [
     "system",
     "updater",
   ]
+  deps = [ ":jsoncpp_install_action" ]
+  part_name = "jsoncpp"
+  subsystem_name = "thirdparty"
 }
 
 ohos_static_library("jsoncpp_static") {
-  sources = [
-    "//third_party/jsoncpp/src/lib_json/json_reader.cpp",
-    "//third_party/jsoncpp/src/lib_json/json_value.cpp",
-    "//third_party/jsoncpp/src/lib_json/json_writer.cpp",
-  ]
+  sources = get_target_outputs(":jsoncpp_install_action")
   use_exceptions = true
-  configs = [ ":config_static" ]
-  configs += [ ":flag_config" ]
-  public_configs = [ ":jsoncpp_public_config" ]
-  include_dirs = [
-    "//third_party/jsoncpp/include/json/",
-    "//third_party/jsoncpp/include/",
+  configs = [
+    ":config_static",
+    ":flag_config",
   ]
+  public_configs = [ ":jsoncpp_public_config" ]
   cflags_cc = [
     "-DJSON_USE_EXCEPTION=0",
     "-Wall",
     "-Werror",
     "-Wno-implicit-fallthrough",
   ]
+  deps = [ ":jsoncpp_install_action" ]
   part_name = "jsoncpp"
   subsystem_name = "thirdparty"
 }
