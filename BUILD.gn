@@ -86,7 +86,6 @@ ohos_static_library("jsoncpp_static") {
   ]
   public_configs = [ ":jsoncpp_public_config" ]
   cflags_cc = [
-    "-DJSON_USE_EXCEPTION=0",
     "-Wall",
     "-Werror",
     "-Wno-implicit-fallthrough",
