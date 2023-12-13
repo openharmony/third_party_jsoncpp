@@ -47,7 +47,7 @@ def apply_patch(patch_file, target_dir):
 
 
 def do_patch(args, target_dir):
-    patch_file = []
+    patch_file = [ "Fix error whenparses the value of 5E-324 with libc++.patch" ]
 
     for patch in patch_file:
         file_path = os.path.join(args.source_file, patch)
@@ -62,6 +62,7 @@ def main():
     tar_file_path = os.path.join(args.source_file, "jsoncpp-1.9.5.tar.gz")
     target_dir = os.path.join(args.gen_dir, "jsoncpp-1.9.5")
     untar_file(tar_file_path, target_dir, args)
+    do_patch(args, target_dir)
     return 0
 
 
