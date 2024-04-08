@@ -45,6 +45,9 @@
                         ],
                         "header_base": "${root_gen_dir}/third_party/jsoncpp/jsoncpp-1.9.5/include"
                     }
+                },
+                {
+                    "name": "//third_party/jsoncpp:jsoncpp_static"
                 }
             ],
             "test": []
