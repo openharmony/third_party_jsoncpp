@@ -1,0 +1,102 @@
+From 2d55c7445ffedf30db62231f223137ef02e611a9 Mon Sep 17 00:00:00 2001
+From: Tero Kinnunen <tero.kinnunen@gmail.com>
+Date: Wed, 15 Dec 2021 04:00:28 +0200
+Subject: [PATCH] Parse large floats as infinity (#1349) (#1353)
+
+Return 1.9.1 functionality where values too large to fit in
+double are converted to positive or negative infinity.
+
+Commit 645cd04 changed functionality so that large floats cause
+parse error, while version 1.9.1 accepted them as infinite.
+This is problematic because writer outputs infinity values
+as `1e+9999`, which could no longer be parsed back.
+
+Fixed also legacy Reader even though it did not parse large values
+even before breaking change, due to problematic output/parse asymmetry.
+
+`>>` operator sets value to numeric_limits::max/lowest value if
+representation is too large to fit to double. [1][2] In macos
+value appears to be parsed to infinity.
+
+> | value in *val*           | description |
+> |--------------------------|-------------|
+> | numeric_limits::max()    | The sequence represents a value too large for the type of val |
+> | numeric_limits::lowest() | The sequence represents a value too large negative for the type of val |
+
+[1] https://www.cplusplus.com/reference/istream/istream/operator%3E%3E/
+[2] https://www.cplusplus.com/reference/locale/num_get/get/
+
+Signed-off-by: Tero Kinnunen <tero.kinnunen@vaisala.com>
+
+Co-authored-by: Tero Kinnunen <tero.kinnunen@vaisala.com>
+---
+ src/lib_json/json_reader.cpp           | 18 +++++++++++++++---
+ test/data/legacy_test_real_13.expected |  3 +++
+ test/data/legacy_test_real_13.json     |  1 +
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+ create mode 100644 test/data/legacy_test_real_13.expected
+ create mode 100644 test/data/legacy_test_real_13.json
+
+diff --git a/src/lib_json/json_reader.cpp b/src/lib_json/json_reader.cpp
+index a6a3f4e..896bf1b 100644
+--- a/src/lib_json/json_reader.cpp
++++ b/src/lib_json/json_reader.cpp
+@@ -12,6 +12,7 @@
+ #endif // if !defined(JSON_IS_AMALGAMATION)
+ #include <algorithm>
+ #include <cassert>
++#include <cmath>
+ #include <cstring>
+ #include <iostream>
+ #include <istream>
+@@ -600,9 +601,15 @@ bool Reader::decodeDouble(Token& token, Value& decoded) {
+   double value = 0;
+   String buffer(token.start_, token.end_);
+   IStringStream is(buffer);
+-  if (!(is >> value))
+-    return addError(
++  if (!(is >> value)) {
++    if (value == std::numeric_limits<double>::max())
++      value = std::numeric_limits<double>::infinity();
++    else if (value == std::numeric_limits<double>::lowest())
++      value = -std::numeric_limits<double>::infinity();
++    else if (!std::isinf(value))
++      return addError(
+         "'" + String(token.start_, token.end_) + "' is not a number.", token);
++  }
+   decoded = value;
+   return true;
+ }
+@@ -1647,7 +1654,12 @@ bool OurReader::decodeDouble(Token& token, Value& decoded) {
+   const String buffer(token.start_, token.end_);
+   IStringStream is(buffer);
+   if (!(is >> value)) {
+-    return addError(
++    if (value == std::numeric_limits<double>::max())
++      value = std::numeric_limits<double>::infinity();
++    else if (value == std::numeric_limits<double>::lowest())
++      value = -std::numeric_limits<double>::infinity();
++    else if (!std::isinf(value))
++      return addError(
+         "'" + String(token.start_, token.end_) + "' is not a number.", token);
+   }
+   decoded = value;
+diff --git a/test/data/legacy_test_real_13.expected b/test/data/legacy_test_real_13.expected
+new file mode 100644
+index 0000000..8d3f03f
+--- /dev/null
++++ b/test/data/legacy_test_real_13.expected
+@@ -0,0 +1,3 @@
++.=[]
++.[0]=-inf
++.[1]=inf
+diff --git a/test/data/legacy_test_real_13.json b/test/data/legacy_test_real_13.json
+new file mode 100644
+index 0000000..287258a
+--- /dev/null
++++ b/test/data/legacy_test_real_13.json
+@@ -0,0 +1 @@
++[-1e+9999, 1e+9999]
+-- 
+2.42.0.windows.2
+
