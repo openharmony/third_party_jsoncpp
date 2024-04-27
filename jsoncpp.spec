@@ -1,11 +1,14 @@
 Name:           jsoncpp
 Version:        1.9.5
-Release:        3
+Release:        5
 Summary:        JSON C++ library
 License:        Public Domain or MIT
 URL:            https://github.com/open-source-parsers/jsoncpp
 Source0:        https://github.com/open-source-parsers/jsoncpp/archive/%{version}/%{name}-%{version}.tar.gz
 BuildRequires:  gcc-c++ cmake >= 3.1 python3-devel
+
+Patch0001:      0001-Parse-large-floats-as-infinity-1349-1353.patch
+Patch0002:      0001-Use-default-rather-than-hard-coded-8-for-maximum-agg.patch
 
 %description
 JsonCpp is a C++ library that allows manipulating JSON values,
@@ -91,6 +94,12 @@ hardlink -cfv %{buildroot}%{_docdir}/%{name}
 
 
 %changelog
+* Thu Nov 16 2023 liubo <liubo1@xfusion.com> - 1.9.5-5
+- Use default rather than hard-coded 8 for maximum aggregate member alignment
+
+* Wed Oct 18 2023 liubo <liubo1@xfusion.com> - 1.9.5-4
+- Parse large floats as infinity
+
 * Mon Jan 10 2022 shixuantong <shixuantong@huawei.com> - 1.9.5-3
 - Delete so files of lower versions
 
