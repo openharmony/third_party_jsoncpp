@@ -59,6 +59,7 @@ config("jsoncpp_public_config") {
 }
 
 ohos_shared_library("jsoncpp") {
+  branch_protector_ret = "pac_ret"
   visibility = [ "*" ]
   sources = get_target_outputs(":jsoncpp_install_action")
   use_exceptions = true
