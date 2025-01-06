@@ -83,9 +83,11 @@ def main():
     libpng_path.add_argument('--source-file', help='jsoncpp source compressed dir')
     args = libpng_path.parse_args()
     tar_file_path = os.path.join(args.source_file, "jsoncpp-1.9.5.tar.gz")
-    target_dir = os.path.join(args.gen_dir, "jsoncpp-1.9.5")
-    untar_file(tar_file_path, target_dir, args)
-    do_patch(args, target_dir)
+    tmp_dir = os.path.join(THIS_FILE_PATH, "jsoncpp-1.9.5")
+    untar_file(tar_file_path, tmp_dir, THIS_FILE_PATH)
+    do_patch(args, tmp_dir)
+    do_copy(tmp_dir, args.gen_dir)
+    do_remove(tmp_dir)
     return 0
 
 
