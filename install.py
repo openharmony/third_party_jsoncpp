@@ -18,7 +18,7 @@ import os
 import subprocess
 import sys
 
-THIS_FILE_PATH = os.path.dirname(os.parh.abspath(__file__))
+THIS_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 def untar_file(tar_file_path, extract_path, extract_dir_path):
     try:
