@@ -41,7 +41,7 @@ def apply_patch(patch_file, target_dir):
             return
 
         patch_cmd = ['patch', '-p1', "--fuzz=0", "--no-backup-if-mismatch", '-i', patch_file, '-d', target_dir]
-        print("tar_cmd:{}".format(patch_cmd))
+        print("patch_cmd:{}".format(patch_cmd))
         subprocess.run(patch_cmd, check=True)
 
     except Exception as e:
@@ -61,7 +61,7 @@ def do_patch(args, target_dir):
         file_path = os.path.join(args.source_file, patch)
         apply_patch(file_path, target_dir)
 
-def do_patch(source_dir, target_dir):
+def do_copy(source_dir, target_dir):
     try:
         cp_cmd = ["cp", "-rf", source_dir, target_dir]
         print("cp_cmd:{}".format(cp_cmd))
