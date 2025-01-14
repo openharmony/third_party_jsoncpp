@@ -18,14 +18,16 @@ import os
 import subprocess
 import sys
 
+THIS_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-def untar_file(tar_file_path, extract_path, args):
+def untar_file(tar_file_path, extract_path, extract_dir_path):
     try:
         if os.path.exists(extract_path):
             rm_cmd = ['rm', '-rf', extract_path]
             subprocess.run(rm_cmd, check=True)
 
-        tar_cmd = ['tar', '-zxvf', tar_file_path, '-C', args.gen_dir]
+        tar_cmd = ['tar', '-zxvf', tar_file_path, '-C', extract_dir_path]
+        print("tar_cmd:{}".format(tar_cmd))
         subprocess.run(tar_cmd, check=True)
 
     except Exception as e:
@@ -39,6 +41,7 @@ def apply_patch(patch_file, target_dir):
             return
 
         patch_cmd = ['patch', '-p1', "--fuzz=0", "--no-backup-if-mismatch", '-i', patch_file, '-d', target_dir]
+        print("patch_cmd:{}".format(patch_cmd))
         subprocess.run(patch_cmd, check=True)
 
     except Exception as e:
@@ -58,6 +61,21 @@ def do_patch(args, target_dir):
         file_path = os.path.join(args.source_file, patch)
         apply_patch(file_path, target_dir)
 
+def do_copy(source_dir, target_dir):
+    try:
+        cp_cmd = ["cp", "-rf", source_dir, target_dir]
+        print("cp_cmd:{}".format(cp_cmd))
+        subprocess.run(cp_cmd, check=True)
+    except Exception as e:
+        print("copy error!")
+        return
+def do_remove(target_dir):
+    try:
+        rm_cmd = ["rm", "-rf", target_dir]
+        subprocess.run(rm_cmd, check=True)
+    except Exception as e:
+        print("remove dir:%s error!" % target_dir)
+        return
 
 def main():
     libpng_path = argparse.ArgumentParser()
@@ -65,9 +83,11 @@ def main():
     libpng_path.add_argument('--source-file', help='jsoncpp source compressed dir')
     args = libpng_path.parse_args()
     tar_file_path = os.path.join(args.source_file, "jsoncpp-1.9.5.tar.gz")
-    target_dir = os.path.join(args.gen_dir, "jsoncpp-1.9.5")
-    untar_file(tar_file_path, target_dir, args)
-    do_patch(args, target_dir)
+    tmp_dir = os.path.join(THIS_FILE_PATH, "jsoncpp-1.9.5")
+    untar_file(tar_file_path, tmp_dir, THIS_FILE_PATH)
+    do_patch(args, tmp_dir)
+    do_copy(tmp_dir, args.gen_dir)
+    do_remove(tmp_dir)
     return 0
 
 
