@@ -1,8 +1,8 @@
 diff --git a/src/lib_json/json_reader.cpp b/src/lib_json/json_reader.cpp
-index f233abb..8f4c544 100755
+index 896bf1b..6624cb0 100644
 --- a/src/lib_json/json_reader.cpp
 +++ b/src/lib_json/json_reader.cpp
-@@ -1666,6 +1666,12 @@ bool OurReader::decodeDouble(Token& token, Value& decoded) {
+@@ -1654,6 +1654,12 @@ bool OurReader::decodeDouble(Token& token, Value& decoded) {
    const String buffer(token.start_, token.end_);
    IStringStream is(buffer);
    if (!(is >> value)) {
@@ -12,6 +12,7 @@ index f233abb..8f4c544 100755
 +      decoded = value;
 +      return true;
 +    }
-     return addError(
-         "'" + String(token.start_, token.end_) + "' is not a number.", token);
-   }
+     if (value == std::numeric_limits<double>::max())
+       value = std::numeric_limits<double>::infinity();
+     else if (value == std::numeric_limits<double>::lowest())
+
