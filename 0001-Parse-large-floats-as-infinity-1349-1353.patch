@@ -67,10 +67,10 @@ index a6a3f4e..896bf1b 100644
    decoded = value;
    return true;
  }
-@@ -1660,7 +1660,12 @@ bool OurReader::decodeDouble(Token& token, Value& decoded) {
-      decoded = value;
-      return true;
-    }
+@@ -1647,7 +1654,12 @@ bool OurReader::decodeDouble(Token& token, Value& decoded) {
+   const String buffer(token.start_, token.end_);
+   IStringStream is(buffer);
+   if (!(is >> value)) {
 -    return addError(
 +    if (value == std::numeric_limits<double>::max())
 +      value = std::numeric_limits<double>::infinity();
