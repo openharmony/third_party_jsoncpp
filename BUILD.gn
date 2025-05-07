@@ -23,6 +23,12 @@ action("jsoncpp_install_action") {
   ]
 
   inputs = [ "//third_party/jsoncpp/jsoncpp-1.9.5.tar.gz" ]
+  inputs += [
+    "0001-Parse-large-floats-as-infinity-1349-1353.patch",
+    "0001-Use-default-rather-than-hard-coded-8-for-maximum-agg.patch",
+    "Fix_error_whenparses_the_value_of_5E-324_with_libc++.patch",
+    "Fix_out-of-bounds_read.patch",
+  ]
 
   args = [
     "--gen-dir",

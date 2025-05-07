@@ -51,10 +51,10 @@ def apply_patch(patch_file, target_dir):
 
 def do_patch(args, target_dir):
     patch_file = [
+        "Fix_error_whenparses_the_value_of_5E-324_with_libc++.patch",
         "0001-Parse-large-floats-as-infinity-1349-1353.patch",
-        "Fix error whenparses the value of 5E-324 with libc++.patch",
         "0001-Use-default-rather-than-hard-coded-8-for-maximum-agg.patch",
-        "Fix out-of-bounds read.patch"
+        "Fix_out-of-bounds_read.patch"
     ]
 
     for patch in patch_file:
