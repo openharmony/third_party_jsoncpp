@@ -17,18 +17,12 @@ import("//build/ohos.gni")
 action("jsoncpp_install_action") {
   script = "//third_party/jsoncpp/install.py"
   outputs = [
-    "${target_gen_dir}/jsoncpp-1.9.5/src/lib_json/json_reader.cpp",
-    "${target_gen_dir}/jsoncpp-1.9.5/src/lib_json/json_value.cpp",
-    "${target_gen_dir}/jsoncpp-1.9.5/src/lib_json/json_writer.cpp",
+    "${target_gen_dir}/jsoncpp-1.9.6/src/lib_json/json_reader.cpp",
+    "${target_gen_dir}/jsoncpp-1.9.6/src/lib_json/json_value.cpp",
+    "${target_gen_dir}/jsoncpp-1.9.6/src/lib_json/json_writer.cpp",
   ]
 
-  inputs = [ "//third_party/jsoncpp/jsoncpp-1.9.5.tar.gz" ]
-  inputs += [
-    "0001-Parse-large-floats-as-infinity-1349-1353.patch",
-    "0001-Use-default-rather-than-hard-coded-8-for-maximum-agg.patch",
-    "Fix_error_whenparses_the_value_of_5E-324_with_libc++.patch",
-    "Fix_out-of-bounds_read.patch",
-  ]
+  inputs = [ "//third_party/jsoncpp/jsoncpp-1.9.6.tar.gz" ]
 
   args = [
     "--gen-dir",
@@ -61,7 +55,7 @@ config("flag_config") {
 
 config("jsoncpp_public_config") {
   include_dirs = [ get_label_info(":jsoncpp_install_action", "target_gen_dir") +
-                   "/jsoncpp-1.9.5/include" ]
+                   "/jsoncpp-1.9.6/include" ]
 }
 
 ohos_shared_library("jsoncpp") {

@@ -43,7 +43,7 @@
                             "json/value.h",
                             "json/version.h"
                         ],
-                        "header_base": "${root_gen_dir}/third_party/jsoncpp/jsoncpp-1.9.5/include"
+                        "header_base": "${root_gen_dir}/third_party/jsoncpp/jsoncpp-1.9.6/include"
                     }
                 },
                 {
