@@ -50,12 +50,7 @@ def apply_patch(patch_file, target_dir):
 
 
 def do_patch(args, target_dir):
-    patch_file = [
-        "Fix_error_whenparses_the_value_of_5E-324_with_libc++.patch",
-        "0001-Parse-large-floats-as-infinity-1349-1353.patch",
-        "0001-Use-default-rather-than-hard-coded-8-for-maximum-agg.patch",
-        "Fix_out-of-bounds_read.patch"
-    ]
+    patch_file = []
 
     for patch in patch_file:
         file_path = os.path.join(args.source_file, patch)
@@ -82,8 +77,8 @@ def main():
     libpng_path.add_argument('--gen-dir', help='generate path of jsoncpp')
     libpng_path.add_argument('--source-file', help='jsoncpp source compressed dir')
     args = libpng_path.parse_args()
-    tar_file_path = os.path.join(args.source_file, "jsoncpp-1.9.5.tar.gz")
-    tmp_dir = os.path.join(THIS_FILE_PATH, "jsoncpp-1.9.5")
+    tar_file_path = os.path.join(args.source_file, "jsoncpp-1.9.6.tar.gz")
+    tmp_dir = os.path.join(THIS_FILE_PATH, "jsoncpp-1.9.6")
     untar_file(tar_file_path, tmp_dir, THIS_FILE_PATH)
     do_patch(args, tmp_dir)
     do_copy(tmp_dir, args.gen_dir)
