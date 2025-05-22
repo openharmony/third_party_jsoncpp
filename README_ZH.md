@@ -1,4 +1,4 @@
-# openEuler:jsoncpp
+# jsoncpp
 
 #### 简介 & 软件架构
 

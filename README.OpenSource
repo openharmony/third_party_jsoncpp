@@ -1,6 +1,6 @@
 [
     {
-        "Name": "openEuler:jsoncpp",
+        "Name": "jsoncpp",
         "License": "MIT License",
         "License File": "Copyright",
         "Version Number": "1.9.6",
