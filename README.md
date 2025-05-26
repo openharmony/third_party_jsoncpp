@@ -1,4 +1,4 @@
-# openEuler:jsoncpp
+# jsoncpp
 
 #### Introduction & Software Architecture
 - [Refer to the official documentation](https://github.com/open-source-parsers/jsoncpp)
