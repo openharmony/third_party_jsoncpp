@@ -73,6 +73,13 @@ ohos_shared_library("jsoncpp") {
     "system",
     "updater",
   ]
+  cflags_cc = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fno-asynchronous-unwind-tables",
+    "-fno-unwind-tables",
+    "-Os",
+  ]
   deps = [ ":jsoncpp_install_action" ]
   part_name = "jsoncpp"
   subsystem_name = "thirdparty"
